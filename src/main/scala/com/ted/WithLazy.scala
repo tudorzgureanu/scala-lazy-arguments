@@ -6,6 +6,7 @@ import scala.collection.immutable.Seq
 import scala.meta.contrib._
 
 class WithLazy extends StaticAnnotation {
+
   import WithLazy._
 
   inline def apply(defn: Any): Any = meta {
@@ -13,12 +14,12 @@ class WithLazy extends StaticAnnotation {
       case defn: Defn.Def =>
         val lazyAnnotatedParams = collectLazyArgs(defn.paramss)
 
-        val localLazyVals: Seq[(String, Defn.Val)] = lazyAnnotatedParams.flatMap(_.map {
+        val localLazyVals: Seq[(String, (Term.Name, Defn.Val))] = lazyAnnotatedParams.flatMap(_.map {
           case param@Term.Param(_, name, Some(Type.Arg.ByName(typeArg)), _) =>
             // transform by-value args to by-name
 
             val lazyTerm = Pat.Var.Term(Term.Name(name.syntax + "Lazy"))
-            name.syntax -> q"lazy val $lazyTerm: $typeArg = ${Term.Name(param.name.value)}"
+            name.syntax -> (lazyTerm.name -> q"lazy val $lazyTerm: $typeArg = ${Term.Name(param.name.value)}")
         })
 
         // todo adjust all the expressions in the body to use the lazy versions of params
@@ -39,17 +40,23 @@ object WithLazy {
     }
   }
 
-  private def adjustVariableUsages(lazyVals: Map[String, Defn.Val], body: Term): Term = {
+  private def adjustVariableUsages(lazyVals: Map[String, (Term.Name, Defn.Val)], body: Term): Term = {
     // TODO 1. add the val definitions to `body`
     // 2. replace occurrences of the `lazyVal` keys with the newly declared lazy vals (extract from `lazyVals` values)
 
-    q"""
-         ..${Seq(lazyVals.values.toSeq: _*)}
+    val updatedBody = replaceNonLazyOccurences(lazyVals.mapValues(_._1), body)
 
-         $body
+    q"""
+         ..${lazyVals.values.map(_._2).toList}
+
+         $updatedBody
         """
-    ???
+  }
+
+  private def replaceNonLazyOccurences(lazyVals: Map[String, Term.Name], body: Term): Term = body match {
+    case _ => ???
   }
 }
 
+// todo check if only the function arguments are annotated and also check if the enclosing function is annotated with `@WithLazy`
 class Lazy extends StaticAnnotation
