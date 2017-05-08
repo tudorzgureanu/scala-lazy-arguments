@@ -22,7 +22,8 @@ lazy val metaMacroSettings: Seq[Def.Setting[_]] = Seq(
 
 lazy val root = (project in file(".")).
   settings(
-    inThisBuild(List(
+    metaMacroSettings,
+    inThisBuild( List(
       organization := "com.ted",
       scalaVersion := "2.12.2",
       version := "0.1.0-SNAPSHOT"
