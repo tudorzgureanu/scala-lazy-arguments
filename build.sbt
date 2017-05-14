@@ -23,12 +23,11 @@ lazy val metaMacroSettings: Seq[Def.Setting[_]] = Seq(
 lazy val root = (project in file(".")).
   settings(
     metaMacroSettings,
-    inThisBuild( List(
+    inThisBuild(List(
       organization := "com.ted",
       scalaVersion := "2.12.2",
       version := "0.1.0-SNAPSHOT"
     )),
     name := "scala-lazy-arguments",
-
     libraryDependencies ++= libDependencies
   )
