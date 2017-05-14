@@ -14,7 +14,7 @@ class WithLazy extends StaticAnnotation {
       case defn: Defn.Def =>
         println(defn.syntax)
 
-        val udpatedParamss = defn.paramss.map { params =>
+        val updatedParamss = defn.paramss.map { params =>
           params.map {
             case lazyParam@Term.Param(_, _, Some(tpe: Type.Name), _) if WithLazy.isLazy(lazyParam) =>
               lazyParam.copy(decltpe = Some(ByName(tpe)))
@@ -32,9 +32,9 @@ class WithLazy extends StaticAnnotation {
             q"lazy val $lazyTerm: $tpe = ${param.name.asTerm}"
         }
 
-        val innerDefn = defn.copy(name = Term.Name(WithLazy.addInnerSuffix(defn.name.value)), paramss = udpatedParamss)
+        val innerDefn = defn.copy(name = Term.Name(WithLazy.addInnerSuffix(defn.name.value)), paramss = updatedParamss)
         val replaceWith = lazyAnnotatedParams.map(param => param.name.value -> Term.Name(WithLazy.addLazySuffix(param.name.value))).toMap
-        val args = WithLazy.replaceArgs(replaceWith, WithLazy.toArgss(udpatedParamss))
+        val args = WithLazy.replaceArgs(replaceWith, WithLazy.toArgss(updatedParamss))
         val updatedBody =
           q"""
               {
@@ -46,7 +46,7 @@ class WithLazy extends StaticAnnotation {
               }
            """
 
-        val updatedDefn = defn.copy(paramss = udpatedParamss, body = updatedBody)
+        val updatedDefn = defn.copy(paramss = updatedParamss, body = updatedBody)
 
         println(s"Generated definition for ${defn.name}:")
         println(updatedDefn.syntax)
