@@ -32,7 +32,7 @@ class WithLazy extends StaticAnnotation {
             q"lazy val $lazyTerm: $tpe = ${param.name.asTerm}"
         }
 
-        val innerDefn = defn.copy(name = Term.Name(defn.name.syntax + WithLazy.innerSuffix), paramss = udpatedParamss)
+        val innerDefn = defn.copy(name = Term.Name(WithLazy.addInnerSuffix(defn.name.value)), paramss = udpatedParamss)
         val replaceWith = lazyAnnotatedParams.map(param => param.name.value -> Term.Name(WithLazy.addLazySuffix(param.name.value))).toMap
         val args = WithLazy.replaceArgs(replaceWith, WithLazy.toArgss(udpatedParamss))
         val updatedBody =
@@ -59,8 +59,8 @@ class WithLazy extends StaticAnnotation {
 }
 
 object WithLazy {
-  val lazySuffix = "$Lazy"
-  val innerSuffix = "$Inner"
+  private val lazySuffix = "$Lazy"
+  private val innerSuffix = "$Inner"
 
   def collectLazyArgs(paramss: Seq[Seq[Term.Param]]): Seq[Term.Param] = {
     paramss.flatMap { paramList =>
@@ -79,6 +79,7 @@ object WithLazy {
     true
   }
 
+  def addInnerSuffix(name: String): String = name + innerSuffix
   def addLazySuffix(name: String): String = name + lazySuffix
 
   def toArgss(params: Seq[Seq[Term.Param]]): Seq[Seq[Term.Name]] = params.map(_.map(param => param.name.asTerm))
