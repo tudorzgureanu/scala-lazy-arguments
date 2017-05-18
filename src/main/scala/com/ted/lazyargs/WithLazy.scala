@@ -11,14 +11,8 @@ class WithLazy extends StaticAnnotation {
   inline def apply(defn: Any): Any = meta {
     defn match {
       case defn: Defn.Def =>
-        val updatedParamss = defn.paramss.map { params =>
-          params.map {
-            case lazyParam@Term.Param(_, _, Some(tpe: Type.Name), _) if WithLazy.isLazy(lazyParam) =>
-              lazyParam.copy(decltpe = Some(Arg.ByName(tpe)))
-            case other => other
-          }
-        }
-        val lazyAnnotatedParams = WithLazy.collectLazyArgs(defn.paramss)
+        val updatedParamss = WithLazy.lazyParamssToByName(defn.paramss)
+        val lazyAnnotatedParams = WithLazy.collectLazyParams(defn.paramss)
         val localLazyValDefinitions: Seq[Defn.Val] = WithLazy.createLazyValDefinitions(lazyAnnotatedParams)
         val innerDefn = defn.copy(name = Term.Name(WithLazy.addInnerSuffix(defn.name.value)), paramss = updatedParamss)
         val replaceWith = lazyAnnotatedParams.map(param => param.name.value -> Term.Name(WithLazy.addLazySuffix(param.name.value))).toMap
@@ -41,11 +35,20 @@ object WithLazy {
   private val lazySuffix = "$Lazy"
   private val innerSuffix = "$Inner"
 
-  def collectLazyArgs(paramss: Seq[Seq[Term.Param]]): Seq[Term.Param] = {
+  def collectLazyParams(paramss: Seq[Seq[Term.Param]]): Seq[Term.Param] = {
     paramss.flatMap { paramList =>
       paramList.filter(isLazy)
     }
   }
+
+  def lazyParamssToByName(paramss: Seq[Seq[Term.Param]]): Seq[Seq[Term.Param]] =
+    paramss.map { params =>
+      params.map {
+        case lazyParam@Term.Param(_, _, Some(tpe: Type.Name), _) if WithLazy.isLazy(lazyParam) =>
+          lazyParam.copy(decltpe = Some(Arg.ByName(tpe)))
+        case other => other
+      }
+    }
 
   def isLazy(param: Term.Param): Boolean = param.mods.exists(modMatchesAnnot[Lazy])
 

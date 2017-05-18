@@ -29,10 +29,11 @@ package object lazyargs {
   /**
     * Returns true if `mod` is an annotation and matches the the FQCN of `@Annot`.
     */
-  private[lazyargs] def modMatchesAnnot[Annot <: StaticAnnotation : ClassTag](mod: Mod): Boolean = mod match {
-    case Mod.Annot(term: Term.Ref) => isSuffix(term, termRefForType[Annot])
-    case _ => false
-  }
+  private[lazyargs] def modMatchesAnnot[Annot <: StaticAnnotation : ClassTag](mod: Mod): Boolean =
+    mod match {
+      case Mod.Annot(term: Term.Ref) => isSuffix(term, termRefForType[Annot])
+      case _ => false
+    }
 
   /**
     * Parses `T.runtimeClass.getName` into a `Term.Ref`.
