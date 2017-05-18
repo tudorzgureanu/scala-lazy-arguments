@@ -19,15 +19,7 @@ class WithLazy extends StaticAnnotation {
           }
         }
         val lazyAnnotatedParams = WithLazy.collectLazyArgs(defn.paramss)
-        val localLazyValDefinitions: Seq[Defn.Val] = lazyAnnotatedParams.map {
-          case param@Term.Param(_, name, Some(tpe: Type.Name), _) =>
-            val lazyTerm = Pat.Var.Term(Term.Name(WithLazy.addLazySuffix(name.value)))
-            q"lazy val $lazyTerm: $tpe = ${param.name.asTerm}"
-          case param@Term.Param(_, _, Some(_: Arg.Repeated), _) =>
-            abort(param.pos, "@Lazy varargs not supported yet.")
-          case other =>
-            abort(other.pos, "No @Lazy parameter allowed here.")
-        }
+        val localLazyValDefinitions: Seq[Defn.Val] = WithLazy.createLazyValDefinitions(lazyAnnotatedParams)
         val innerDefn = defn.copy(name = Term.Name(WithLazy.addInnerSuffix(defn.name.value)), paramss = updatedParamss)
         val replaceWith = lazyAnnotatedParams.map(param => param.name.value -> Term.Name(WithLazy.addLazySuffix(param.name.value))).toMap
         val args = WithLazy.replaceArgs(replaceWith, WithLazy.toArgss(updatedParamss))
@@ -39,8 +31,7 @@ class WithLazy extends StaticAnnotation {
               ${innerDefn.name}(...$args)
               }
            """
-        val updatedDefn = defn.copy(paramss = updatedParamss, body = updatedBody)
-        updatedDefn
+        defn.copy(paramss = updatedParamss, body = updatedBody)
       case other => abort(other.pos, "@WithLazy must annotate a method.")
     }
   }
@@ -57,6 +48,17 @@ object WithLazy {
   }
 
   def isLazy(param: Term.Param): Boolean = param.mods.exists(modMatchesAnnot[Lazy])
+
+  def createLazyValDefinitions(lazyAnnotatedParams: Seq[Term.Param]): Seq[Defn.Val] =
+    lazyAnnotatedParams.map {
+      case param@Term.Param(_, name, Some(tpe: Type.Name), _) =>
+        val lazyTerm = Pat.Var.Term(Term.Name(addLazySuffix(name.value)))
+        q"lazy val $lazyTerm: $tpe = ${param.name.asTerm}"
+      case param@Term.Param(_, _, Some(_: Arg.Repeated), _) =>
+        abort(param.pos, "@Lazy varargs not supported yet.")
+      case other =>
+        abort(other.pos, "No @Lazy parameter allowed here.")
+    }
 
   def addInnerSuffix(name: String): String = name + innerSuffix
 
