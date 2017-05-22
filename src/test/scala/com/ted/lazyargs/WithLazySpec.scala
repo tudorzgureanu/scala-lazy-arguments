@@ -32,6 +32,20 @@ class WithLazySpec extends WordSpecLike with Matchers {
         result shouldBe ""
         nastyVar shouldBe 0
       }
+
+      "evaluate the non-annotated with @Lazy `bar` argument even though it is not used" in {
+        @WithLazy
+        def foo(bar: String) = ""
+        var nastyVar = 0
+
+        val result = foo{
+          nastyVar += 1
+          "bar "
+        }
+
+        result shouldBe ""
+        nastyVar shouldBe 1
+      }
     }
   }
 }
