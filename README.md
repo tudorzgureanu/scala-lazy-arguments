@@ -9,7 +9,6 @@ This is an attempt of adding by-need arguments in Scala. It comes with a macro a
 ```
 @WithLazy
 def lazyFoo(cond: Boolean)(@Lazy bar: String) = if (cond) bar + bar else ""
-
 ```
 
 TODOs:
