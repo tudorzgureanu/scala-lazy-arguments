@@ -3,6 +3,7 @@ package com.ted
 import scala.annotation.StaticAnnotation
 import scala.meta._
 import scala.reflect.ClassTag
+import scala.meta.contrib._
 
 package object lazyargs {
 
@@ -41,14 +42,4 @@ package object lazyargs {
     */
   private[this] def termRefForType[T](implicit ev: ClassTag[T]): Term.Ref =
     ev.runtimeClass.getName.parse[Term].get.asInstanceOf[Term.Ref]
-}
-
-// will be added to the next release: https://github.com/scalameta/scalameta/pull/800
-object Select {
-  def unapply(tree: Tree): Option[(Term, Name)] = tree match {
-    case Term.Select(qual, name) => Some(qual -> name)
-    case Type.Select(qual, name) => Some(qual -> name)
-    case Ctor.Ref.Select(qual, name) => Some(qual -> name)
-    case _ => None
-  }
 }
