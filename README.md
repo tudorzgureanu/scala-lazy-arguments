@@ -49,7 +49,7 @@ Scala provides support for by-need arguments (`def foo(bar: => String)`) but the
 TBD
 
 TODOs:
-- [x] Initial Implementation of @WithLazy which makes all the args lazy.
+- [x] Initial Implementation of @WithLazy.
 - [x] Add support for @Lazy annotated args.
 - [ ] [In progress] Unit testing.
 - [ ] Update README.md with a short project overview.
