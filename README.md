@@ -1,6 +1,6 @@
 # Adds support for call-by-need parameters
 
-At this point it's more like experimenting with scalameta rather than a real thing, although it might change at some point.
+> At this point it's more like experimenting with scalameta rather than a real thing, although it might change at some point.
 
 This is an attempt to add by-need arguments in Scala. It is implemented using scalameta macro annotations.
 
