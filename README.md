@@ -1,8 +1,6 @@
 # Adds support for call-by-need parameters
 
-> At this point it's more like experimenting with scalameta rather than a real thing, although it might change at some point.
-
-This is an attempt to add by-need arguments in Scala. It is implemented using scalameta macro annotations.
+This is an attempt (read as experiment) to add [by-need](https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_need) arguments in Scala. It is implemented using scalameta macro annotations.
 
 ## Example
 
@@ -46,7 +44,8 @@ lazy val root =
 Scala provides support for by-need arguments (`def foo(bar: => String)`) but they are evaluated on every occurence in the code. Call-by-need is a memoised version of call-by-name (i.e. it is evaluated only once when it's used for the first time).
 
 ## Implementation details
-TBD
+
+The current implementation relies on local lazy val definitions so keep in mind when using it.
 
 TODOs:
 - [x] Initial Implementation of @WithLazy.
