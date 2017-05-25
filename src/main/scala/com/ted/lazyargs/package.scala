@@ -22,15 +22,14 @@ package object lazyargs {
       case (a: Name, b: Name) => a.value == b.value
       case (Select(q"_root_", a), b: Name) => a.value == b.value
       case (a: Name, Select(_, b)) => a.value == b.value
-      case (Select(aRest, a), Select(bRest, b)) =>
-        a.value == b.value && isSuffix(aRest, bRest)
+      case (Select(aRest, a), Select(bRest, b)) => a.value == b.value && isSuffix(aRest, bRest)
       case _ => false
     }
 
   /**
     * Returns true if `mod` is an annotation and matches the the FQCN of `@Annot`.
     */
-  private[lazyargs] def modMatchesAnnot[Annot <: StaticAnnotation : ClassTag](mod: Mod): Boolean =
+  private[lazyargs] def modMatchesAnnot[Annot <: StaticAnnotation: ClassTag](mod: Mod): Boolean =
     mod match {
       case Mod.Annot(term: Term.Ref) => isSuffix(term, termRefForType[Annot])
       case _ => false

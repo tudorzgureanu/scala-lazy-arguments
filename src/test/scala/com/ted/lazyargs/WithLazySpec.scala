@@ -7,7 +7,8 @@ class WithLazySpec extends WordSpecLike with Matchers {
   "WithLazy" when {
     "annotates a simple method" should {
       @WithLazy
-      def lazyFoo(cond: Boolean)(@Lazy bar: String) = if (cond) bar + bar else ""
+      def lazyFoo(cond: Boolean)(@Lazy bar: String) =
+        if (cond) bar + bar else ""
 
       "evaluate the @Lazy block only once on `cond` being true" in {
         var nastyVar = 0
@@ -38,7 +39,7 @@ class WithLazySpec extends WordSpecLike with Matchers {
         def foo(bar: String) = ""
         var nastyVar = 0
 
-        val result = foo{
+        val result = foo {
           nastyVar += 1
           "bar "
         }

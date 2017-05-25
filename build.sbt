@@ -30,4 +30,4 @@ lazy val root = (project in file(".")).
     )),
     name := "scala-lazy-arguments",
     libraryDependencies ++= libDependencies
-  )
+  ).enablePlugins(ScalafmtPlugin)
