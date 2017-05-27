@@ -5,6 +5,8 @@ This is an attempt (read as experiment) to add [by-need](https://en.wikipedia.or
 ## Example
 
 ```
+import com.tudorzgureanu.lazyargs._
+
 @WithLazy
 def lazyFoo(cond: Boolean)(@Lazy bar: String) = if (cond) bar + bar else ""
 ```
