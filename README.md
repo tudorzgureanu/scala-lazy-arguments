@@ -36,7 +36,7 @@ lazy val root =
     .settings(
       enableMacroAnnotations,
       libraryDependencies ++= Seq(
-        "com.ted" %% "scala-lazy-arguments" % "0.1.0-SNAPSHOT"       
+        "com.tudorzgureanu" %% "scala-lazy-arguments" % "0.1.0-SNAPSHOT"       
       ))
 
 ```
