@@ -1,4 +1,4 @@
-package com.ted.lazyargs
+package com.tudorzgureanu.lazyargs
 
 import scala.annotation.StaticAnnotation
 import scala.collection.immutable.Seq

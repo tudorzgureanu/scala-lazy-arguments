@@ -1,4 +1,4 @@
-package com.ted
+package com.tudorzgureanu
 
 import scala.annotation.StaticAnnotation
 import scala.meta._
