@@ -8,7 +8,7 @@ lazy val libDependencies = Seq(
   scalaTest % Test
 )
 
-lazy val metaMacroSettings: Seq[Def.Setting[_]] = Seq(
+lazy val metaMacroSettings = Seq(
   // A dependency on macro paradise 3.x is required to both write and expand
   // new-style macros.  This is similar to how it works for old-style macro
   // annotations and a dependency on macro paradise 2.x.
@@ -24,12 +24,11 @@ lazy val root = (project in file(".")).
   settings(
     name := "scala-lazy-arguments",
     description := "Call by need arguments in Scala",
-    inThisBuild(List(
-      organization := "com.tudorzgureanu",
-      scalaVersion := "2.12.2",
-      version := "0.1.0-SNAPSHOT"
-    )),
+    organization := "com.tudorzgureanu",
+    scalaVersion := "2.12.2",
+    version := "0.1.0-SNAPSHOT",
+    crossScalaVersions := Seq("2.11.11", "2.12.2"),
     libraryDependencies ++= libDependencies,
-    metaMacroSettings,
-    licenses := ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0")) :: Nil
+    licenses := ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0")) :: Nil,
+    metaMacroSettings
   ).enablePlugins(ScalafmtPlugin)
