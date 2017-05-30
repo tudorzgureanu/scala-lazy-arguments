@@ -47,7 +47,7 @@ Scala provides support for by-need arguments (`def foo(bar: => String)`) but the
 
 ## Implementation details
 
-The current implementation relies on local lazy val definitions so keep in mind when using it.
+The current implementation relies on local `lazy val`s so keep in mind when using it.
 
 ## Future plans
 
