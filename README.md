@@ -53,3 +53,5 @@ The current implementation relies on local `lazy val`s so keep in mind when usin
 
 I will try to find time to follow the progress of scalameta and apply any improvements to this project. If you have any ideas feel free to open an issue.
 
+Also, I plan to add a naive lazy implementation for the code that doesn't involve any multi-threading (which is most of the time). This will replace the local lazy vals with a simple (non thread-safe) cache.
+
