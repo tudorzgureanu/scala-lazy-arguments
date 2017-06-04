@@ -13,32 +13,38 @@ def lazyFoo(cond: Boolean)(@Lazy bar: String) = if (cond) bar + bar else ""
 
 ## Installation
 
-Clone the repo and publish the project locally:
+You will need to use Scala `2.11.8+` or `2.12.x`.
+
+- Add the bintray repo resolver for this project:
+```
+resolvers += Resolver.bintrayIvyRepo("tudorzgureanu", "generic")
+```
+
+- Add the dependency to this project:
+```
+libraryDependencies += "com.tudorzgureanu" %% "scala-lazy-arguments" % "0.1.0"
+```
+
+- Add scalameta paradise compiler plugin and scalameta dependency:
+```
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M8" cross CrossVersion.full)
+
+libraryDependencies += "org.scalameta" %% "scalameta" % "1.8.0" % Provided
+```
+
+You can find an example of a build.sbt file with all the required dependencies bellow:
 
 ```
-> git clone git@github.com:tudorzgureanu/scala-lazy-arguments.git
-> sbt publishLocal
-```
+scalaVersion := "2.12.2"
 
-In your build.sbt file:
+resolvers += Resolver.bintrayIvyRepo("tudorzgureanu", "generic")
 
-```
-lazy val enableMacroAnnotations: Seq[Def.Setting[_]] = Seq(
-  addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M8" cross CrossVersion.full),
-  libraryDependencies += "org.scalameta" %% "scalameta" % "1.8.0" % Provided,
-  scalacOptions += "-Xplugin-require:macroparadise"
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M8" cross CrossVersion.full)
+
+libraryDependencies ++= Seq(
+  "com.tudorzgureanu" %% "scala-lazy-arguments" % "0.1.0",
+  "org.scalameta" %% "scalameta" % "1.8.0" % Provided
 )
-```
-and then add it to your project settings:
-```
-lazy val root =
-  (project in file("."))
-    .settings(
-      enableMacroAnnotations,
-      libraryDependencies ++= Seq(
-        "com.tudorzgureanu" %% "scala-lazy-arguments" % "0.1.0-SNAPSHOT"       
-      ))
-
 ```
 
 ## Why call-by-need and why call-by-name is not enough?
