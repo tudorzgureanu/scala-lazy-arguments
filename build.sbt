@@ -20,15 +20,26 @@ lazy val metaMacroSettings = Seq(
   sources in(Compile, doc) := Nil // macroparadise doesn't work with scaladoc yet.
 )
 
+lazy val bintraySettings = Seq(
+  bintrayRepository := "generic",
+  bintrayOrganization := Some("tudorzgureanu"),
+  publishArtifact in Test := false,
+  bintrayPackageLabels := Seq("scala", "lazy", "call-by-need"),
+  bintrayVcsUrl := Some("https://github.com/tudorzgureanu/scala-lazy-arguments")
+)
+
 lazy val root = (project in file(".")).
   settings(
     name := "scala-lazy-arguments",
     description := "Call by need arguments in Scala",
     organization := "com.tudorzgureanu",
     scalaVersion := "2.12.2",
-    version := "0.1.0-SNAPSHOT",
+    version := "0.1.0",
     crossScalaVersions := Seq("2.11.11", "2.12.2"),
     libraryDependencies ++= libDependencies,
     licenses := ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0")) :: Nil,
-    metaMacroSettings
+    metaMacroSettings,
+    publishArtifact in Test := false,
+    publishMavenStyle := false,
+    bintraySettings
   ).enablePlugins(ScalafmtPlugin)
