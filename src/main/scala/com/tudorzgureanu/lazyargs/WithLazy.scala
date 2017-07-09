@@ -5,6 +5,7 @@ import scala.collection.immutable.Seq
 import scala.meta.Type.Arg
 import scala.meta._
 import scala.meta.contrib._
+import scala.reflect.ClassTag
 
 class WithLazy extends StaticAnnotation {
 
@@ -78,4 +79,30 @@ object WithLazy {
     }
   }
 
+  /**
+    * Generates all the subpackages for the given class.
+    *
+    * e.g.
+    * allSubPackages[com.tudorzgureanu.lazyargs.Lazy] yields
+    * Vector(
+    *   _root_.com.tudorzgureanu.lazyargs.Lazy,
+    *   com.tudorzgureanu.lazyargs.Lazy,
+    *   tudorzgureanu.lazyargs.Lazy,
+    *   lazyargs.Lazy,
+    *   Lazy)
+    */
+  private def allSubPackages[T](implicit classTag: ClassTag[T]): Seq[String] = {
+    val subPackages = ("_root_." + classTag.runtimeClass.getName).split("\\.")
+    for {
+      i <- 0 until subPackages.size
+    } yield subPackages.drop(i).mkString(".")
+  }
+
+  /**
+    * Returns true if `mod` is an annotation and matches the the FQCN of `@Annot`.
+    */
+  private def modMatchesAnnot[Annot <: StaticAnnotation: ClassTag](mod: Mod) = mod match {
+    case annot: Mod.Annot => allSubPackages[Annot].contains(annot.body.syntax)
+    case _ => false
+  }
 }
